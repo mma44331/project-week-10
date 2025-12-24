@@ -14,6 +14,9 @@ class contact(BaseModel):
     last_name: str  = Field(max_length=50,min_length=3)
     phone_number: str = Field(max_length=20,min_length=3)
 
+    def convert_to_dict(self):
+        return self.__dict__
+
 
 app = FastAPI()
 

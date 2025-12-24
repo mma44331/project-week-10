@@ -5,8 +5,8 @@ services:
     image: mysql:8.0
     container_name: mysql_db
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: contacts_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s

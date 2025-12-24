@@ -1,11 +1,6 @@
 import os
-
 import mysql.connector
 from mysql.connector import errorcode, Error
-
-
-
-
 
 def get_cnx():
     try:
@@ -22,24 +17,21 @@ def get_cnx():
         else:
             print(err)
 
-
-
 class Connect():
     def __init__(self):
         self.cnx = get_cnx()
         if not self.cnx:
             raise ConnectionError("Cannot connect to the database")
 
-    def get_contacts(self)->dict:
+    def get_contacts(self)->list | dict:
         try:
-            with self.cnx.cursor() as cursor:
+            with self.cnx.cursor(dictionary=True) as cursor:
                 cursor.execute("select * from contacts")
                 data = cursor.fetchall()
-                return {"all contacts":data}
+                return data
         except Error as err:
             print(f"Error db {err}")
             return {"error":str(err)}
-
 
 
     def create_new_contact(self,contact)->dict:
