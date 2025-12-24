@@ -1,3 +1,5 @@
+import os
+
 import mysql.connector
 from mysql.connector import errorcode
 
@@ -5,10 +7,10 @@ from mysql.connector import errorcode
 
 def get_cnx():
     try:
-        cnx = mysql.connector.connect(user='root', password='root',
-                                      host='127.0.0.1',
-                                      port='3306',
-                                      database='contacts_db')
+        cnx = mysql.connector.connect(user=os.getenv("DB_USER"), password=os.getenv("DB_PASSWORD"),
+                                      host=os.getenv("DB_HOST"),
+                                      port=os.getenv("DB_PORT"),
+                                      database=os.getenv("DB_NAME"))
         return cnx
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
