@@ -4,18 +4,18 @@ from data_interactor import Connect
 from pydantic import BaseModel, Field
 
 
-class contact_uodate(BaseModel):
+class ContactUpdate(BaseModel):
     first_name:str | None = None
     last_name:str | None = None
     phone_number:str | None = None
 
-class contact(BaseModel):
+class Contact(BaseModel):
     first_name: str = Field(max_length=50,min_length=3)
     last_name: str  = Field(max_length=50,min_length=3)
     phone_number: str = Field(max_length=20,min_length=3)
 
     def convert_to_dict(self):
-        return self.__dict__
+        return self.dict(exclude_unset=False)
 
 
 app = FastAPI()
@@ -30,11 +30,11 @@ def get_all_contacts():
     return data
 
 @app.post("/contacts")
-def create_new_contact(contact:contact):
+def create_new_contact(contact:Contact):
     return con.create_new_contact(contact)
 
 @app.put("/contacts/{id}")
-def update_contact(id:str,contact:contact_uodate):
+def update_contact(id:str,contact:ContactUpdate):
     return con.update_contact(id,contact)
 
 @app.delete("/contacts/{id}")
