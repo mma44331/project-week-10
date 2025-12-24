@@ -1,7 +1,9 @@
 import os
 
 import mysql.connector
-from mysql.connector import errorcode
+from mysql.connector import errorcode, Error
+
+
 
 
 
@@ -19,49 +21,68 @@ def get_cnx():
             print("Database does not exist")
         else:
             print(err)
-    else:
-        cnx.close()
+
 
 
 class Connect():
     def __init__(self):
         self.cnx = get_cnx()
+        if not self.cnx:
+            raise ConnectionError("Cannot connect to the database")
 
-    def get_contacts(self):
-        cursor = self.cnx.cursor()
-        cursor.execute("select * from contacts")
-        data = cursor.fetchall()
-        return data
+    def get_contacts(self)->dict:
+        try:
+            with self.cnx.cursor() as cursor:
+                cursor.execute("select * from contacts")
+                data = cursor.fetchall()
+                return {"all contacts":data}
+        except Error as err:
+            print(f"Error db {err}")
+            return {"error":str(err)}
+
+
 
     def create_new_contact(self,contact)->dict:
-        cursor = self.cnx.cursor()
-        sql = """INSERT INTO contacts(first_name, last_name, phone_number) VALUES (%s,%s,%s) """
-        valuse = (contact.first_name,contact.last_name,contact.phone_number)
-        cursor.execute(sql,valuse)
-        id = cursor.lastrowid
-        self.cnx.commit()
-        return {"message": "Contact created successfully","id": id}
+        try:
+            with self.cnx.cursor() as cursor:
+                sql = """INSERT INTO contacts(first_name, last_name, phone_number) VALUES (%s,%s,%s) """
+                values = (contact.first_name,contact.last_name,contact.phone_number)
+                cursor.execute(sql,values)
+                id = cursor.lastrowid
+                self.cnx.commit()
+                return {"message": "Contact created successfully","id": id}
+        except Error as err:
+            print(f"error: {err}")
+            return {f"error": err}
 
-    def updeta_contact(self,id,contact):
-        contact = contact.dict()
-        cursor = self.cnx.cursor()
-        for key,val in contact.items():
-            cursor.execute(
-                f"""update contacts
-                    set `{key}` = %s
-                    WHERE id = %s
-                    """,
-                (val,id)
-            )
-        self.cnx.commit()
-        return "The contact person was successfully updated."
+    def update_contact(self,id,contact)->dict | str:
+        try:
+            with self.cnx.cursor() as cursor:
+                contact = contact.dict()
+                for key,val in contact.items():
+                    cursor.execute(
+                        f"""update contacts
+                            set `{key}` = %s
+                            WHERE id = %s
+                            """,
+                        (val,id)
+                    )
+                self.cnx.commit()
+                return "The contact person was successfully updated."
+        except Error as err:
+            print(f"error: {err}")
+            return {f"error": err}
 
-    def delete_contact(self,id):
-        cursor = self.cnx.cursor()
-        cursor.execute(f"DELETE from contacts WHERE id = %s",(id,))
-        self.cnx.commit()
-        return "The contact was successfully deleted."
 
+    def delete_contact(self,id)->dict | str:
+        try:
+            with self.cnx.cursor() as cursor:
+                cursor.execute(f"DELETE from contacts WHERE id = %s",(id,))
+                self.cnx.commit()
+                return "The contact was successfully deleted."
+        except Error as err:
+            print(f"error: {err}")
+            return {f"error": err}
 
 
 
