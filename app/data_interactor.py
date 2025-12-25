@@ -52,6 +52,8 @@ class Connect():
             with self.cnx.cursor() as cursor:
                 contact = contact.dict()
                 for key,val in contact.items():
+                    if val == None:
+                        continue
                     cursor.execute(
                         f"""update contacts
                             set `{key}` = %s

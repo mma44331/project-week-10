@@ -34,11 +34,11 @@ def create_new_contact(contact:Contact):
     return con.create_new_contact(contact)
 
 @app.put("/contacts/{id}")
-def update_contact(id:str,contact:ContactUpdate):
+def update_contact(id:int,contact:ContactUpdate):
     return con.update_contact(id,contact)
 
 @app.delete("/contacts/{id}")
-def delete_contact(id:str):
+def delete_contact(id:int):
     return con.delete_contact(id)
 
 if __name__ == "__main__":
