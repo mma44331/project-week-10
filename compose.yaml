@@ -11,10 +11,10 @@ services:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s
       retries: 5
-    ports:
-      - "3306:3306"
     volumes:
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+
 
   api:
     build: ./app
@@ -32,3 +32,5 @@ services:
       DB_PORT: 3306
 
 
+volumes:
+  mysql_data:

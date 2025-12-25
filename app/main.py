@@ -5,9 +5,9 @@ from pydantic import BaseModel, Field
 
 
 class ContactUpdate(BaseModel):
-    first_name:str | None = None
-    last_name:str | None = None
-    phone_number:str | None = None
+    first_name: str = Field(default=None,max_length=50, min_length=3)
+    last_name: str = Field(default=None,max_length=50, min_length=3)
+    phone_number: str = Field(default=None,max_length=20, min_length=3)
 
 class Contact(BaseModel):
     first_name: str = Field(max_length=50,min_length=3)
